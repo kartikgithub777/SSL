@@ -1,13 +1,9 @@
-# It is a Library for making HTTP request in NodeJs 
 const axios = require('axios');
 
-# Fetching the information from the Environment Variables
 const { SLACK_WEBHOOK_URL, DOMAINS_TO_CHECK } = process.env;
 
-# It Splits the Domains the Environment Variables into an array
 const domainsToCheck = DOMAINS_TO_CHECK.split(',');
 
-# It checks SSL expiry date
 async function checkExpiry(domain) {
   try {
     const { stdout } = await exec(`openssl s_client -servername ${domain} -connect ${domain}:443 < /dev/null 2>/dev/null | openssl x509 -noout -enddate`);
@@ -32,7 +28,6 @@ async function exec(command) {
   return exec(command);
 }
 
-# Sends Expiry Alerts to the Slack. 
 (async () => {
   for (const domain of domainsToCheck) {
     const remainingDays = await checkExpiry(domain.trim());
